@@ -74,7 +74,7 @@ Les figures 2 et 3 sont les dernières versions de l'architecture. Ce sont celle
   	\centering
   	\includegraphics[width=1\textwidth]{Figures/cn.png}
   	\caption{Dernier diagramme : collocationNetwork}
-  	\includegraphics[width=1\textwidth]{Figures/cn.png}
+  	\includegraphics[width=1\textwidth]{Figures/mondiagramme.png}
   	\caption{Dernier diagramme : linkDetection}
 	\end{figure}
 	
@@ -112,15 +112,11 @@ Les informations sur les thread sont une ressource qui s’appuie sur les inform
 	
 	\section{Utilisation du programme}
 
-	L'intégralité de mon code se trouve sur mon GitHub :
-..........................
-Cependant, les corpus n'y sont pas car ils sont trop lourd. Ces derniers doivent être rajouté dans un dossier data, et certains liens devront être modifié pour la bonne exécution du programme. 
+	L'intégralité de mon code se trouve sur mon GitHub : \url{https://github.com/Slayerxoxo/myUimaDevLogProject}\\
+	
+Cependant, les corpus n'y sont pas car ils sont trop lourds. Ces derniers doivent être rajouté dans un dossier data, et certains liens devront être modifiés pour la bonne exécution du programme. Le code a été fait sous Eclipse mais il peut également être utilisé via Maven. 
 
-Le code à été fait sous Eclipse mais il peut également être utilisé via Maven. 
-
-L'exécution du programme complet se fait par le lancement des deux workflow :
-- d'abord le CollocationNetworkBuilderWF
-- puis le MboxWF
+L'exécution du programme complet se fait par le lancement des deux workflow : d'abord le CollocationNetworkBuilderWF.java, puis le MboxWF.java.
 
 
 	%%%%% Conclusion %%%%%
@@ -129,7 +125,7 @@ L'exécution du programme complet se fait par le lancement des deux workflow :
 
 	Au terme de ce travail, plusieurs remarques peuvent être faites. Tout d'abord, notons que ce projet nous a permis de découvrir une nouvelle technologie : UIMA. Bien que l'utilisation de ce framework ne soit pas facile à apprendre, à terme il s'est révélé être un outil puissant et très utile pour le traitement automatique des langues. 
 
-	Cependant, UIMA reste un framework Java, ainsi beaucoup de tâches qui seraient rapide à coder dans un langage de script tel que le Python ou le Perl, sont lentes et laborieuse à écrire en Java. De plus, il existe assez peu de documentation et d'explication sur Internet..............................
+	Cependant, UIMA reste un framework Java, ainsi beaucoup de tâches qui seraient rapide à coder dans un langage de script tel que le Python ou le Perl, sont lentes et laborieuse à écrire en Java. De plus, il existe assez peu de documentation et d'explication sur Internet.
 
 	\subsection*{Résultats}
 	Ce travail avait pour principal objectif d'apprendre à se servir de UIMA, ce qui m'a pris pas mal de temps, j'ai donc délaissé le côté évaluation que j'aurais ien aimé approfondir pour avoir de meilleurs résultats. Il est toutefois possible d’évaluer les résultats obtenus à l’aide d’un script Perl fourni. Comme la puissance de mon PC est grandement limitée, j'ai éffectué mes test à partir d'une version allégée du corpus qui à été créée par les anciens M2 ATAL. Ce corpus ne fais que 10Mo au lieu des 160Mo d'origine. Les résultats sont à prévoir assez mauvais et peu représentatif : P = 0.4550 et R = 0.0285
