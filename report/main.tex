@@ -56,11 +56,19 @@
 	
 	\section{Conception}
 	
-	L'objectif de ce projet est de trouver des liens entre plusieurs messages désorganisés appartenant à un même thread. Pour ce faire, le programme a été divisé en deux grandes étapes. Tout d'abord, on construit un réseau de collocation à partir d'une archive html d'Ubuntu. Ensuite, on construit pour chaque message d'un autre corpus (Zim), une ou plusieurs chaînes lexicales. Pour finir, on compare ces messages entre-eux grâce à leurs chaînes lexicales afin de trouver des correspondances et donc, des liens entre les messages.
+	L'objectif de ce projet est de trouver des liens entre plusieurs messages désorganisés appartenant à un même thread. Pour ce faire, le programme a été divisé en deux grandes étapes. Tout d'abord, on construit un réseau de collocation à partir d'une archive html d'Ubuntu. Ensuite, on construit pour chaque message d'un autre corpus (Zim), une ou plusieurs chaînes lexicales. Pour finir, on compare ces messages entre-eux grâce à leurs chaînes lexicales afin de trouver des correspondances et donc, des liens entre les messages.\\
+	
+	Afin d'accélérer la conception de ce projet, plusieurs ressources ont été fournies en même temps que le sujet :
+\begin{itemize}
+	\item une archive contenant de la documentation Ubuntu : Zim;
+	\item un fichier contenant des mails de la liste de diffusion d'Ubuntu : Mbox; 
+	\item une liste de mots outils : stopwords;
+	\item un fichier contenant les threads de discussion du Mbox : Digest.
+\end{itemize}
 
 	\subsection{Initialisation du projet}
 	
-	Avant même de commencer à coder le programme, il faut d'abord imaginer son architecture. Pour ma part, j'ai d'abord fait plusieurs schémas avant de réussir à définir la structure du programme. La figure 1 est la première version de mon programme. Celle-ci était divisée en trois Workflows : la création du réseau de collocation, la création des chaînes lexicales et la comparaison. Le dernier workflow est encore flou sur ce schéma car je ne savais pas encore comment le faire avant de commencer à coder. \\
+	Avant même de commencer à coder le programme, il faut d'abord imaginer son architecture. Pour ma part, j'ai d'abord fait plusieurs schémas avant de réussir à définir la structure du programme. La figure 1 décrit la première version de l'architecture de mon programme. Celle-ci était divisée en trois Workflows : la création du réseau de collocation, la création des chaînes lexicales et la comparaison. Le dernier workflow est encore flou sur ce schéma car je ne savais pas encore comment le faire avant de commencer à coder. \\
 	
 	\begin{figure}[!]
   	\centering
@@ -68,7 +76,7 @@
   	\caption{Premier diagramme}
 	\end{figure}
 		
-Les figures 2 et 3 sont les dernières versions de l'architecture. Ce sont celles que j'ai suivi pour coder le programme définitif. Il y a maintenant deux workflows, le premier pour la création du réseau de collocation, et le deuxième pour la construction des chaînes lexicales et la comparaison des messages.
+Les figures 2 et 3 sont les dernières versions de l'architecture. Ce sont celles que j'ai suivi pour coder le programme définitif. Il y a maintenant deux workflows, le premier pour la création du réseau de collocation, et le deuxième regroupe la construction des chaînes lexicales et la comparaison des messages.
 	
 	\begin{figure}[!]
   	\centering
@@ -95,10 +103,10 @@ Le programme a été codé sur Eclipse à partir de l'archive et des exemples de
 	Le package \texttt{zim2collocationNetwork} contient tous les objets java que j'ai créé ou modifié pour permettre la génération du réseau de collocation. L'Analysis Engines \texttt{CollocationNetworkBuilderAE} a été partiellement fourni, il ne manquait que la partie process à coder.
 
 	\subsection{mbox2lexicalChain}
-	Le package \texttt{mbox2lexicalChain} a été forni pour aider notamment à la tokénisation des messages. On y trouve donc l'Analysis Engines \texttt{MBoxMessageParserAE} qui permet de découper le corpus en messages. J'ai d'ailleurs rajouté le type Message afin de garder certaines informations comme l’Id du message, nécessaire pour la suite du programme. Cet AE est lancé dans le second workflow, avant l'AE de segmentation, ce qui permet de tokeniser uniquement le corps du message.
+	Le package \texttt{mbox2lexicalChain} a été fourni pour aider notamment à la tokénisation des messages. On y trouve donc l'Analysis Engines \texttt{MBoxMessageParserAE} qui permet de découper le corpus en messages. J'ai d'ailleurs rajouté le type Message afin de garder certaines informations comme l’Id du message, nécessaire pour la suite du programme. Cet AE est lancé dans le second workflow, avant l'AE de segmentation, ce qui permet de tokeniser uniquement le corps du message.
 
 	\subsection{linkDetection}
-	Ce package ne contient que des objets Java que j'ai créé pour le second workflow. Ils permettent de créer les chaînes lexicales et de faire la comparaison des messages. L'Analysis Engines \texttt{LexicalChainsNetworkBuilderAE} s’inspire des travaux de Marathe \& Hirst pour créer des chaînes lexicales. Cependant si plusieurs chaînes obtiennent de bons scores, on n’ajoute que la meilleure. Les scores de similarité permettant de déterminer si un mot appartient à une chaîne lexicale étant calculés par moyenne, il est peu probable d’obtenir plusieurs chaînes avec le score optimal. Dans la méthode de Marathe \& Hirst, pour un mot donné, toutes les chaînes déjà calculées sont candidates. Mais cela demandait trop de ressources pour mon ordinateur, je me suis donc limité en ne gardant pour candidats que les 20 dernières chaînes. Cela réduit mes résultats, mais mon netbook avec Eclipse ne disposait pas d'assez de mémoire pour arriver au bout du processus. L'Analysis Engines \texttt{LinkerAE} s'éxecute juste après. Il utilise également les informations du thread décrites ci-après. La détection des liens se fait message par message, sans avoir créée à l'avance toutes les chaînes lexicales de tous les messages. Cela signifie que pour un message donné, on regarde les autres messages de son thread et on choisit celui qui est le plus proche. La similarité entre deux messages est ensuite calculée d’après la moyenne des similarités entre les chaînes lexicales les composant.
+	Ce package ne contient que des objets Java que j'ai créé pour le second workflow. Ils permettent de créer les chaînes lexicales et de faire la comparaison des messages. L'Analysis Engines \texttt{LexicalChainsNetworkBuilderAE} s’inspire des travaux de Marathe \& Hirst pour créer des chaînes lexicales et pour les évaluer. Cependant si plusieurs chaînes lexicales obtiennent de bons scores, on ne garde que la meilleure chaîne. Les scores de similarité qui permettent de déterminer si un mot appartient à une chaîne lexicale étant calculés par moyenne, il est peu probable d’obtenir plusieurs chaînes avec le score optimal. Dans la méthode de Marathe \& Hirst, pour un mot donné, toutes les chaînes déjà calculées sont candidates. Mais cela demandait trop de ressources pour mon ordinateur, je me suis donc limité en ne gardant pour candidats que les 20 dernières chaînes. Cela réduit mes résultats, mais mon netbook avec Eclipse ne disposait pas d'assez de mémoire pour arriver au bout du processus. L'Analysis Engines \texttt{LinkerAE} s'éxecute juste après. Il utilise également les informations du thread décrites ci-après. La détection des liens se fait message par message, sans avoir créée à l'avance toutes les chaînes lexicales de tous les messages. Cela signifie que pour un message donné, on regarde les autres messages de son thread et on choisit celui qui est le plus proche. La similarité entre deux messages est ensuite calculée d’après la moyenne des similarités entre les chaînes lexicales les composant.
 
 	\subsection{wordSegmenter}
 	Le package \texttt{wordSegmenter} contient tous les objets java qui ont été fournis pour permettre la segmentation des corpus. L'Analysis Engines \texttt{WordSegmenterAE} a été fourni et n'a pas subi de modifications.
@@ -107,7 +115,7 @@ Le programme a été codé sur Eclipse à partir de l'archive et des exemples de
 	La première ressource importante est le Stop Words. Celle-ci était fournie et permet d'éliminer les mots outils lors de la segmentation des corpus. 
 La seconde ressource est le réseau de collocation. Celle-ci est initialisée et remplie lors du l'execution du premier workflow. Elle est constituée de paires de mots pour lesquelles on a associé un score de collocation. Cette ressource est notamment utilisée lors de l'éxecution du deuxième workflow pour la création des chaînes lexicales. 
 Les chaînes lexicales forment la troisième ressource. Elle est donc créée lors de l'éxecution du deuxième workflow et contient les identifiants de chaque message auquel on a associé l'ensemble des chaînes lexicales représentant ce même message. 
-Les informations sur les thread sont une ressource qui s’appuie sur les informations disponibles dans un fichier thread digest. Elle détaille la structure des threads et stocke chaque thread avec les messages qu’il contient, ainsi que chaque message avec le thread auquel il est associé. Cette redondance permet par la suite d’accéder plus rapidement aux informations nécessaires. Cette ressource a été mise en place par les M2Atal de l'année dernière, je l'ai donc reprise et modifiée afin de pouvoir l'intégrer dans mon code.
+Les informations sur les thread sont une ressource qui s’appuie sur les informations disponibles dans un fichier thread digest. Elle détaille la structure des threads et stocke chaque thread avec les messages qu’il contient, ainsi que chaque message avec le thread auquel il est associé. Cette redondance permet par la suite d’accéder plus rapidement aux informations nécessaires. Cette ressource a été mise en place par les M2 Atal de l'année dernière, je l'ai donc reprise et modifiée afin de pouvoir l'intégrer dans mon code.
 	
 	
 	\section{Utilisation du programme}
@@ -128,7 +136,7 @@ L'exécution du programme complet se fait par le lancement des deux workflow : d
 	Cependant, UIMA reste un framework Java, ainsi beaucoup de tâches qui seraient rapides à coder dans un langage de script tel que le Python ou le Perl, sont lentes et laborieuses à écrire en Java. De plus, il existe assez peu de documentation et d'explications sur Internet.
 
 	\subsection*{Résultats}
-	Ce travail avait pour principal objectif d'apprendre à se servir de UIMA, ce qui m'a pris pas mal de temps, j'ai donc délaissé le côté évaluation que j'aurais bien aimé approfondir. Malheureusement je n'ai jamais réussi à aller jusqu'au bout du programme. Le code que j'ai écrit n'est pas optimisé et je me suis rendu compte assez tard que le corpus était très pollué (pièce jointes, images,\dots). Il aurait fallu que je code un script pour nettoyé le corpus pour pouvoir travaillé correctement mais j'ai manqué de temps. Les résultats que j'ai obtenu sont tirés d'une version allégée du corpus qui a été créée par les anciens M2 Atal. Ils ne sont donc pas représentatif du corpus complet et sont assez mauvais. L'évaluation des résultats c'est faite par l'intermédiaire d'un programme Perl fourni : P = 0.4550 et R = 0.0285. 
+	Ce travail avait pour principal objectif d'apprendre à se servir de UIMA, ce qui m'a pris pas mal de temps, j'ai donc délaissé le côté évaluation que j'aurais bien aimé approfondir. Malheureusement je n'ai jamais réussi à aller jusqu'au bout du programme. Le code que j'ai écrit n'est pas optimisé et je me suis rendu compte assez tard que le corpus était très pollué (pièce jointes, images,\dots). Il aurait fallu que je code un script pour nettoyé le corpus pour pouvoir travaillé correctement sur l'intégralité du corpus, mais j'ai manqué de temps. Les résultats que j'ai obtenu sont tirés d'une version allégée du corpus qui a été créée par les anciens M2 Atal. Ils ne sont donc pas représentatif du corpus complet et sont assez mauvais. L'évaluation des résultats c'est faite par l'intermédiaire d'un programme Perl fourni : P = 0.4550 et R = 0.0285. 
 
 	%\newpage
 	
